@@ -4054,10 +4054,12 @@ function BattlegroundTargets:EnableConfigMode()
     if (not testDataLoaded) then
         table_wipe(ENEMY_Data);
         table_wipe(healers);
+        table_wipe(dds);
+        table_wipe(tanks);
 
-        healers[1] = 1;
-        healers[2] = 2;
-        healers[3] = 3;
+        healers["Target_Bb"] = true;
+        tanks["Target_Ee"] = true;
+
 
         ENEMY_Data[1] = { name = "Target_Aa-WoW Circle 3.3.5a x5", classToken = "DRUID" }
         ENEMY_Data[2] = { name = "Target_Bb-WoW Circle 3.3.5a x10", classToken = "PRIEST" }
@@ -4066,9 +4068,9 @@ function BattlegroundTargets:EnableConfigMode()
         ENEMY_Data[5] = { name = "Target_Ee-WoW Circle 3.3.5a x100", classToken = "WARRIOR" }
         ENEMY_Data[6] = { name = "Target_Ff-WoW Circle 3.3.5a x300", classToken = "ROGUE" }
         ENEMY_Data[7] = { name = "Target_Gg-WoW Circle 3.3.5a x5", classToken = "SHAMAN" }
-        ENEMY_Data[8] = { unitID = 3, name = "Target_Hh-WoW Circle 3.3.5a x10", classToken = "PALADIN" }
+        ENEMY_Data[8] = { name = "Target_Hh-WoW Circle 3.3.5a x10", classToken = "PALADIN" }
         ENEMY_Data[9] = { name = "Target_Ii-WoW Circle 3.3.5a x15-20", classToken = "MAGE" }
-        ENEMY_Data[10] = { unitID = 2, name = "ДворфдкAa-WoW Circle 3.3.5a x25", classToken = "DEATHKNIGHT" }
+        ENEMY_Data[10] = { name = "ДворфдкAa-WoW Circle 3.3.5a x25", classToken = "DEATHKNIGHT" }
         ENEMY_Data[11] = { name = "Target_Kk-WoW Circle 3.3.5a x100", classToken = "DRUID" }
         ENEMY_Data[12] = { name = "Target_Ll-WoW Circle 3.3.5a x300", classToken = "DEATHKNIGHT" }
         ENEMY_Data[13] = { name = "Target_Mm-WoW Circle 3.3.5a x5", classToken = "PALADIN" }
@@ -4085,7 +4087,7 @@ function BattlegroundTargets:EnableConfigMode()
         ENEMY_Data[24] = { name = "Target_Xx-WoW Circle 3.3.5a x300", classToken = "HUNTER" }
         ENEMY_Data[25] = { name = "Target_Yy-WoW Circle 3.3.5a x5", classToken = "SHAMAN" }
         ENEMY_Data[26] = { name = "Target_Zz-WoW Circle 3.3.5a x10", classToken = "WARLOCK" }
-        ENEMY_Data[27] = { unitID = 1, name = "Target_heal-WoW Circle 3.3.5a x15-20", classToken = "PRIEST" }
+        ENEMY_Data[27] = { name = "Target_heal-WoW Circle 3.3.5a x15-20", classToken = "PRIEST" }
         ENEMY_Data[28] = { name = "Target_Cd-WoW Circle 3.3.5a x25", classToken = "DRUID" }
         ENEMY_Data[29] = { name = "Target_Ef-WoW Circle 3.3.5a x100", classToken = "ROGUE" }
         ENEMY_Data[30] = { name = "Target_Gh-WoW Circle 3.3.5a x300", classToken = "DRUID" }
@@ -5008,8 +5010,10 @@ end
 function BattlegroundTargets:IsBattleground()
     inBattleground = true;
     isFlagBG = 0;
-    table_wipe(healers);
-    table_wipe(bgSpecs);
+    bgSpecs = {};
+    healers = {};
+    dds = {};
+    tanks = {};
 
     local queueStatus, queueMapName, bgName;
     for i = 1, MAX_BATTLEFIELD_QUEUES do
@@ -5429,9 +5433,6 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
         end
 
         enemyName, enemyRealm = UnitName(enemyID);
-        if (enemyRealm and enemyRealm ~= "") then
-            enemyName = enemyName .. "-" .. enemyRealm;
-        end
     else
         enemyID = "target";
         friendName = playerName;
@@ -5619,12 +5620,14 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
             end
         end
     end
-    if (healers[enemyID]) then
-        enemyName = enemyName .. "- ХИЛ!!!";
-    elseif (dds[enemyID]) then
-        enemyName = enemyName .. "- ДД!!!";
-    elseif (tanks[enemyID]) then
-        enemyName = enemyName .. "- ТАНК!!!";
+
+    if (healers[enemyName]) then
+        enemyName = enemyName .. " - ХИЛ!!!";
+    elseif (dds[enemyName]) then
+        message("dd")
+        enemyName = enemyName .. " - ДД!!!";
+    elseif (tanks[enemyName]) then
+        enemyName = enemyName .. " - ТАНК!!!";
     end
 end
 
@@ -6192,44 +6195,44 @@ end
 
 
 function BattlegroundTargets:CheckSpecBySpell(unitID)
+    local unitName = UnitName(unitID)
     local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(unitID)
-    if (not bgSpecs[unitID] and spell) then --ENEMY_Names[unit.name] and
-        bgSpecs[unitID] = true
+    if (not bgSpecs[unitName] and spell) then --ENEMY_Names[unit.name] and
+        bgSpecs[unitName] = true
         -- Healer detection
-        BattlegroundTargets:DetectSpec(unitID, specSpells[spell])
+        BattlegroundTargets:DetectSpec(unitName, specSpells[spell])
     end
 end
 
 function BattlegroundTargets:CheckSpecByAura(unitID)
 
     if( not unitID ) then return end
-    if (not bgSpecs[unitID]) then
-        bgSpecs[unitID] = true
+    local unitName = UnitName(unitID)
+    if (not bgSpecs[unitName]) then
+        bgSpecs[unitName] = true
         local index = 1
 
         --Buffs
         while ( true ) do
             local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unitID, index, "HELPFUL")
             if ( not name ) then break end
+            local casterName = UnitName(unitCaster)
             -- Healer detection
-            BattlegroundTargets:DetectSpec(unitCaster, specBuffs[name])
+            BattlegroundTargets:DetectSpec(casterName, specBuffs[name])
 
             index = index + 1
         end
     end
 end
 
-function BattlegroundTargets:DetectSpec(unitID, spec)
+function BattlegroundTargets:DetectSpec(unitName, spec)
     if( not spec ) then return end
     if (spec == healer) then
-        --message(unitID .. " is healer")
-        healers[unitID] = true
+        healers[unitName] = true
     elseif (spec == dd) then
-        --message(unitID .. " is dd")
-        dds[unitID] = true
+        dds[unitName] = true
     elseif (spec == tank) then
-        --message(unitID .. " is tank")
-        tanks[unitID] = true
+        tanks[unitName] = true
     end
 end
 
