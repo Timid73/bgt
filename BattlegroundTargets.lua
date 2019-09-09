@@ -235,6 +235,8 @@ local specSpells = {
     [GetSpellInfo(18562)] = healer, -- Swiftmend
 }
 local healers = {};
+local dds = {};
+local tanks = {};
 
 local _G = _G;
 local GetTime = _G.GetTime;
@@ -5436,10 +5438,6 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
         enemyName = unitName;
     end
 
-    if (healers[enemyID]) then
-        enemyName = enemyName .. "- HEALER!!!";
-    end
-
     local curTime = GetTime();
 
     if (flagCHK and isFlagBG > 0) then
@@ -5620,6 +5618,13 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
                 Range_Display(false, GVAR_TargetButton, OPT.ButtonRangeDisplay[currentSize]);
             end
         end
+    end
+    if (healers[enemyID]) then
+        enemyName = enemyName .. "- ХИЛ!!!";
+    elseif (dds[enemyID]) then
+        enemyName = enemyName .. "- ДД!!!";
+    elseif (tanks[enemyID]) then
+        enemyName = enemyName .. "- ТАНК!!!";
     end
 end
 
@@ -5989,13 +5994,13 @@ function BattlegroundTargets:CheckFaction()
     local isHordeBuff = UnitBuff("player", "Орда");
     local isAllianceBuff = UnitBuff("player", "Альянс");
 
-    if (faction == "Horde") then
+    if (faction == "Horde" and not isAllianceBuff) then
         playerFactionDEF = 0;
         oppositeFactionDEF = 1;
     elseif (isHordeBuff) then
         playerFactionDEF = 0;
         oppositeFactionDEF = 1;
-    elseif (faction == "Alliance") then
+    elseif (faction == "Alliance" and not isHordeBuff) then
         playerFactionDEF = 1;
         oppositeFactionDEF = 0;
     elseif (isAllianceBuff) then
@@ -6144,13 +6149,13 @@ local function OnEvent(self, event, ...)
         end
     elseif (event == "UNIT_AURA") then
         local arg1 = ...;
-        BattlegroundTargets:CheckHealerByAura(arg1)
+        BattlegroundTargets:CheckSpecByAura(arg1)
     elseif (event == "UNIT_SPELLCAST_START") then
         local arg1 = ...;
-        BattlegroundTargets:CheckHealerBySpell(arg1)
+        BattlegroundTargets:CheckSpecBySpell(arg1)
     elseif (event == "UNIT_SPELLCAST_SUCCEEDED") then
         local arg1 = ...;
-        BattlegroundTargets:CheckHealerBySpell(arg1)
+        BattlegroundTargets:CheckSpecBySpell(arg1)
     elseif (event == "PLAYER_LOGIN") then
         BattlegroundTargets:CheckFaction();
         BattlegroundTargets:InitOptions();
@@ -6186,19 +6191,20 @@ local function OnEvent(self, event, ...)
 end
 
 
-function BattlegroundTargets:CheckHealerBySpell(unitID)
+function BattlegroundTargets:CheckSpecBySpell(unitID)
     local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(unitID)
-    if (not healers[unitID] and spell) then --ENEMY_Names[unit.name] and
-
+    if (not bgSpecs[unitID] and spell) then --ENEMY_Names[unit.name] and
+        bgSpecs[unitID] = true
         -- Healer detection
-        BattlegroundTargets:DetectHealer(unitID, specSpells[spell])
+        BattlegroundTargets:DetectSpec(unitID, specSpells[spell])
     end
 end
 
-function BattlegroundTargets:CheckHealerByAura(unitID)
+function BattlegroundTargets:CheckSpecByAura(unitID)
 
     if( not unitID ) then return end
-    if (not healers[unitID]) then
+    if (not bgSpecs[unitID]) then
+        bgSpecs[unitID] = true
         local index = 1
 
         --Buffs
@@ -6206,19 +6212,24 @@ function BattlegroundTargets:CheckHealerByAura(unitID)
             local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unitID, index, "HELPFUL")
             if ( not name ) then break end
             -- Healer detection
-            BattlegroundTargets:DetectHealer(unitCaster, specBuffs[name])
+            BattlegroundTargets:DetectSpec(unitCaster, specBuffs[name])
 
             index = index + 1
         end
     end
 end
 
-function BattlegroundTargets:DetectHealer(unitID, spec)
-    if( not spec or bgSpecs[unitID]) then return end
-    table.insert(bgSpecs, unitID)
+function BattlegroundTargets:DetectSpec(unitID, spec)
+    if( not spec ) then return end
     if (spec == healer) then
-        message(unitID .. " is healer")
-        table.insert(healers, unitID)
+        --message(unitID .. " is healer")
+        healers[unitID] = true
+    elseif (spec == dd) then
+        --message(unitID .. " is dd")
+        dds[unitID] = true
+    elseif (spec == tank) then
+        --message(unitID .. " is tank")
+        tanks[unitID] = true
     end
 end
 
