@@ -127,113 +127,6 @@ local OPT = {};
 local AddonIcon = "Interface\\AddOns\\BattlegroundTargets\\BattlegroundTargets-texture-button";
 
 local bgSpecs = {}
-local specBuffs = {
-    -- WARRIOR
-    [GetSpellInfo(56638)] = dd, -- Taste for Blood
-    [GetSpellInfo(64976)] = dd, -- Juggernaut
-    [GetSpellInfo(29801)] = dd, -- Rampage
-    [GetSpellInfo(50227)] = tank, -- Sword and Board
-    -- PALADIN
-    [GetSpellInfo(20375)] = dd, -- If you are using Seal of Command, I hate you so much
-    [GetSpellInfo(31836)] = healer, -- Light's Grace
-    -- ROGUE
-    [GetSpellInfo(36554)] = dd, -- Shadowstep
-    [GetSpellInfo(31223)] = dd, -- Master of Subtlety
-    -- PRIEST
-    [GetSpellInfo(47788)] = healer, -- Guardian Spirit
-    [GetSpellInfo(52800)] = healer, -- Borrowed Time
-    [GetSpellInfo(15473)] = dd, -- Shadowform
-    [GetSpellInfo(15286)] = dd, -- Vampiric Embrace
-    -- DEATHKNIGHT
-    [GetSpellInfo(49222)] = dd, -- Bone Shield
-    [GetSpellInfo(49016)] = dd, -- Hysteria
-    [GetSpellInfo(53138)] = dd, -- Abomination's Might
-    [GetSpellInfo(55610)] = dd, -- Imp. Icy Talons
-    -- MAGE
-    [GetSpellInfo(43039)] = dd, -- Ice Barrier
-    [GetSpellInfo(11129)] = dd, -- Combustion
-    [GetSpellInfo(31583)] = dd, -- Arcane Empowerment
-    -- WARLOCK
-    [GetSpellInfo(30302)] = dd, -- Nether Protection
-    -- SHAMAN
-    [GetSpellInfo(57663)] = dd, -- Totem of Wrath
-    [GetSpellInfo(49284)] = healer, -- Earth Shield
-    [GetSpellInfo(51470)] = dd, -- Elemental Oath
-    [GetSpellInfo(30809)] = dd, -- Unleashed Rage
-    -- HUNTER
-    [GetSpellInfo(20895)] = dd, -- Spirit Bond
-    [GetSpellInfo(19506)] = dd, -- Trueshot Aura
-    -- DRUID
-    [GetSpellInfo(24932)] = dd, -- Leader of the Pack
-    [GetSpellInfo(34123)] = healer, -- Tree of Life
-    [GetSpellInfo(24907)] = dd, -- Moonkin Aura
-    [GetSpellInfo(53251)] = healer, -- Wild Growth
-}
-local specSpells = {
-    -- WARRIOR
-    [GetSpellInfo(47486)] = dd, -- Mortal Strike
-    [GetSpellInfo(46924)] = dd, -- Bladestorm
-    [GetSpellInfo(23881)] = dd, -- Bloodthirst
-    [GetSpellInfo(12809)] = tank, -- Concussion Blow
-    [GetSpellInfo(47498)] = tank, -- Devastate
-    -- PALADIN
-    [GetSpellInfo(48827)] = tank, -- Avenger's Shield
-    [GetSpellInfo(48825)] = healer, -- Holy Shock
-    [GetSpellInfo(35395)] = dd, -- Crusader Strike
-    [GetSpellInfo(53385)] = dd, -- Divine Storm
-    [GetSpellInfo(20066)] = dd, -- Repentance
-    -- ROGUE
-    [GetSpellInfo(48666)] = dd, -- Mutilate
-    [GetSpellInfo(51690)] = dd, -- Killing Spree
-    [GetSpellInfo(13877)] = dd, -- Blade Flurry
-    [GetSpellInfo(13750)] = dd, -- Adrenaline Rush
-    [GetSpellInfo(48660)] = dd, -- Hemorrhage
-    -- PRIEST
-    [GetSpellInfo(53007)] = healer, -- Penance
-    [GetSpellInfo(10060)] = healer, -- Power Infusion
-    [GetSpellInfo(33206)] = healer, -- Pain Suppression
-    [GetSpellInfo(34861)] = healer, -- Circle of Healing
-    [GetSpellInfo(15487)] = dd, -- Silence
-    [GetSpellInfo(48160)] = dd, -- Vampiric Touch
-    -- DEATHKNIGHT
-    [GetSpellInfo(55262)] = dd, -- Heart Strike
-    [GetSpellInfo(49203)] = dd, -- Hungering Cold
-    [GetSpellInfo(55268)] = dd, -- Frost Strike
-    [GetSpellInfo(51411)] = dd, -- Howling Blast
-    [GetSpellInfo(55271)] = dd, -- Scourge Strike
-    -- MAGE
-    [GetSpellInfo(44781)] = dd, -- Arcane Barrage
-    [GetSpellInfo(55360)] = dd, -- Living Bomb
-    [GetSpellInfo(42950)] = dd, -- Dragon's Breath
-    [GetSpellInfo(42945)] = dd, -- Blast Wave
-    [GetSpellInfo(44572)] = dd, -- Deep Freeze
-    -- WARLOCK
-    [GetSpellInfo(59164)] = dd, -- Haunt
-    [GetSpellInfo(47843)] = dd, -- Unstable Affliction
-    [GetSpellInfo(59672)] = dd, -- Metamorphosis
-    [GetSpellInfo(59172)] = dd, -- Chaos Bolt
-    [GetSpellInfo(47847)] = dd, -- Shadowfury
-    -- SHAMAN
-    [GetSpellInfo(59159)] = dd, -- Thunderstorm
-    [GetSpellInfo(16166)] = dd, -- Elemental Mastery
-    [GetSpellInfo(51533)] = dd, -- Feral Spirit
-    [GetSpellInfo(30823)] = dd, -- Shamanistic Rage
-    [GetSpellInfo(17364)] = dd, -- Stormstrike
-    [GetSpellInfo(61301)] = healer, -- Riptide
-    [GetSpellInfo(51886)] = healer, -- Cleanse Spirit
-    -- HUNTER
-    [GetSpellInfo(19577)] = dd, -- Intimidation
-    [GetSpellInfo(34490)] = dd, -- Silencing Shot
-    [GetSpellInfo(53209)] = dd, -- Chimera Shot
-    [GetSpellInfo(60053)] = dd, -- Explosive Shot
-    [GetSpellInfo(49012)] = dd, -- Wyvern Sting
-    -- DRUID
-    [GetSpellInfo(53201)] = dd, -- Starfall
-    [GetSpellInfo(61384)] = dd, -- Typhoon
-    [GetSpellInfo(48566)] = dd, -- Mangle (Cat)
-    [GetSpellInfo(48564)] = dd, -- Mangle (Bear)
-    [GetSpellInfo(18562)] = healer, -- Swiftmend
-}
 local healers = {};
 local dds = {};
 local tanks = {};
@@ -4057,10 +3950,6 @@ function BattlegroundTargets:EnableConfigMode()
         table_wipe(dds);
         table_wipe(tanks);
 
-        healers["Target_Bb"] = true;
-        tanks["Target_Ee"] = true;
-
-
         ENEMY_Data[1] = { name = "Target_Aa-WoW Circle 3.3.5a x5", classToken = "DRUID" }
         ENEMY_Data[2] = { name = "Target_Bb-WoW Circle 3.3.5a x10", classToken = "PRIEST" }
         ENEMY_Data[3] = { name = "Target_Cc-WoW Circle 3.3.5a x15-20", classToken = "MAGE" }
@@ -4816,9 +4705,13 @@ function BattlegroundTargets:BattlefieldScoreUpdate()
 
     local x = 1;
     for index = 1, GetNumBattlefieldScores() do
-        local name, _, _, _, _, faction, _, _, _, classToken = GetBattlefieldScore(index);
+        --local name, _, _, _, _, faction, _, _, _, classToken = GetBattlefieldScore(index);
+        local name, faction, classToken, damageDone, healingDone = GetBattlefieldScore(index);
 
         if (name) then
+            if (healingDone > 1.5 * damageDone) then
+               healers[name] = true
+            end
             if (faction == oppositeFactionBG) then
                 if (oppositeFactionREAL == nil and race) then
                     local n = RNA[race];
@@ -5624,7 +5517,6 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
     if (healers[enemyName]) then
         enemyName = enemyName .. " - ХИЛ!!!";
     elseif (dds[enemyName]) then
-        message("dd")
         enemyName = enemyName .. " - ДД!!!";
     elseif (tanks[enemyName]) then
         enemyName = enemyName .. " - ТАНК!!!";
@@ -5997,16 +5889,16 @@ function BattlegroundTargets:CheckFaction()
     local isHordeBuff = UnitBuff("player", "Орда");
     local isAllianceBuff = UnitBuff("player", "Альянс");
 
-    if (faction == "Horde" and not isAllianceBuff) then
+    if (isHordeBuff) then
         playerFactionDEF = 0;
         oppositeFactionDEF = 1;
-    elseif (isHordeBuff) then
-        playerFactionDEF = 0;
-        oppositeFactionDEF = 1;
-    elseif (faction == "Alliance" and not isHordeBuff) then
+    elseif (isAllianceBuff) then
         playerFactionDEF = 1;
         oppositeFactionDEF = 0;
-    elseif (isAllianceBuff) then
+    elseif (faction == "Horde") then
+        playerFactionDEF = 0;
+        oppositeFactionDEF = 1;
+    elseif (faction == "Alliance") then
         playerFactionDEF = 1;
         oppositeFactionDEF = 0;
     elseif (faction == "Neutral") then
@@ -6150,15 +6042,6 @@ local function OnEvent(self, event, ...)
             playerLevel = arg1;
             BattlegroundTargets:CheckPlayerLevel();
         end
-    elseif (event == "UNIT_AURA") then
-        local arg1 = ...;
-        BattlegroundTargets:CheckSpecByAura(arg1)
-    elseif (event == "UNIT_SPELLCAST_START") then
-        local arg1 = ...;
-        BattlegroundTargets:CheckSpecBySpell(arg1)
-    elseif (event == "UNIT_SPELLCAST_SUCCEEDED") then
-        local arg1 = ...;
-        BattlegroundTargets:CheckSpecBySpell(arg1)
     elseif (event == "PLAYER_LOGIN") then
         BattlegroundTargets:CheckFaction();
         BattlegroundTargets:InitOptions();
@@ -6193,55 +6076,9 @@ local function OnEvent(self, event, ...)
     end
 end
 
-
-function BattlegroundTargets:CheckSpecBySpell(unitID)
-    local unitName = UnitName(unitID)
-    local spell, rank, displayName, icon, startTime, endTime, isTradeSkill = UnitCastingInfo(unitID)
-    if (not bgSpecs[unitName] and spell) then --ENEMY_Names[unit.name] and
-        bgSpecs[unitName] = true
-        -- Healer detection
-        BattlegroundTargets:DetectSpec(unitName, specSpells[spell])
-    end
-end
-
-function BattlegroundTargets:CheckSpecByAura(unitID)
-
-    if( not unitID ) then return end
-    local unitName = UnitName(unitID)
-    if (not bgSpecs[unitName]) then
-        bgSpecs[unitName] = true
-        local index = 1
-
-        --Buffs
-        while ( true ) do
-            local name, rank, icon, count, debuffType, duration, expirationTime, unitCaster, isStealable = UnitAura(unitID, index, "HELPFUL")
-            if ( not name ) then break end
-            local casterName = UnitName(unitCaster)
-            -- Healer detection
-            BattlegroundTargets:DetectSpec(casterName, specBuffs[name])
-
-            index = index + 1
-        end
-    end
-end
-
-function BattlegroundTargets:DetectSpec(unitName, spec)
-    if( not spec ) then return end
-    if (spec == healer) then
-        healers[unitName] = true
-    elseif (spec == dd) then
-        dds[unitName] = true
-    elseif (spec == tank) then
-        tanks[unitName] = true
-    end
-end
-
 BattlegroundTargets:RegisterEvent("PLAYER_REGEN_DISABLED");
 BattlegroundTargets:RegisterEvent("PLAYER_REGEN_ENABLED");
 BattlegroundTargets:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 BattlegroundTargets:RegisterEvent("PLAYER_LOGIN");
 BattlegroundTargets:RegisterEvent("PLAYER_ENTERING_WORLD");
 BattlegroundTargets:SetScript("OnEvent", OnEvent);
-BattlegroundTargets:RegisterEvent("UNIT_SPELLCAST_START");
-BattlegroundTargets:RegisterEvent("UNIT_SPELLCAST_SUCCEEDED")
-BattlegroundTargets:RegisterEvent("UNIT_AURA")
