@@ -24,7 +24,7 @@ BattlegroundTargets_Localization:CreateLocaleTable({
 ["Show Target"] = "Отображать цель",
 ["Show Focus"] = "Отображать фокус",
 ["Show Flag Carrier"] = "Отображать флагоносца",
-["Show Main Assist Target"] = "Отображать главного наводчика",
+["Show Main Assist Target"] = "Отображать лекарей",
 ["Show Target Count"] = "Отображать подсчет нацеливаний",
 ["Show Health Bar"] = "Отображать полоску здоровья",
 ["Show Percent"] = "Отображать проценты здоровья",

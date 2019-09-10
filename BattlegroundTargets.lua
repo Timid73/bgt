@@ -1773,7 +1773,7 @@ function BattlegroundTargets:CreateFrames()
         GVAR_TargetButton.AssistTexture:SetHeight(buttonHeight - 2);
         GVAR_TargetButton.AssistTexture:SetPoint("LEFT", GVAR_TargetButton, "RIGHT", 0, 0);
         GVAR_TargetButton.AssistTexture:SetTexCoord(0.07812501, 0.92187499, 0.07812501, 0.92187499);
-        GVAR_TargetButton.AssistTexture:SetTexture("Interface\\Icons\\Ability_Hunter_SniperShot");
+        GVAR_TargetButton.AssistTexture:SetTexture("Interface\\Icons\\Spell_chargepositive");
         GVAR_TargetButton.AssistTexture:SetAlpha(0);
 
         GVAR_TargetButton:RegisterForClicks("AnyUp");
@@ -3950,6 +3950,9 @@ function BattlegroundTargets:EnableConfigMode()
         table_wipe(dds);
         table_wipe(tanks);
 
+        healers["ДворфдкAa-WoW Circle 3.3.5a x25"] = true
+        healers["Target_Bb"] = true
+
         ENEMY_Data[1] = { name = "Target_Aa-WoW Circle 3.3.5a x5", classToken = "DRUID" }
         ENEMY_Data[2] = { name = "Target_Bb-WoW Circle 3.3.5a x10", classToken = "PRIEST" }
         ENEMY_Data[3] = { name = "Target_Cc-WoW Circle 3.3.5a x15-20", classToken = "MAGE" }
@@ -4622,8 +4625,8 @@ function BattlegroundTargets:MainDataUpdate()
                 end
             end
 
-            if (ButtonShowAssist and assistTargetName) then
-                if (qname == assistTargetName) then
+            if (ButtonShowAssist and qname) then
+                if (healers[qname]) then
                     GVAR_TargetButton.AssistTexture:SetAlpha(1);
                 else
                     GVAR_TargetButton.AssistTexture:SetAlpha(0);
@@ -4705,13 +4708,16 @@ function BattlegroundTargets:BattlefieldScoreUpdate()
 
     local x = 1;
     for index = 1, GetNumBattlefieldScores() do
-        --local name, _, _, _, _, faction, _, _, _, classToken = GetBattlefieldScore(index);
-        local name, faction, classToken, damageDone, healingDone = GetBattlefieldScore(index);
+        local name, _, _, _, _, faction, _, _, _, classToken, damageDone, healingDone = GetBattlefieldScore(index);
+        --local name, faction, classToken, damageDone, healingDone = GetBattlefieldScore(index);
 
         if (name) then
             if (healingDone > 1.5 * damageDone) then
-               healers[name] = true
+                healers[name] = true
+            else
+                healers[name] = false
             end
+
             if (faction == oppositeFactionBG) then
                 if (oppositeFactionREAL == nil and race) then
                     local n = RNA[race];
@@ -5514,12 +5520,15 @@ function BattlegroundTargets:CheckUnitTarget(unitID, unitName)
         end
     end
 
+    local assistButton = ENEMY_Name2Button[enemyName];
+    if (not assistButton) then return; end
+
+    if (not GVAR.TargetButton[assistButton]) then return; end
+
     if (healers[enemyName]) then
-        enemyName = enemyName .. " - ХИЛ!!!";
-    elseif (dds[enemyName]) then
-        enemyName = enemyName .. " - ДД!!!";
-    elseif (tanks[enemyName]) then
-        enemyName = enemyName .. " - ТАНК!!!";
+        GVAR.TargetButton[assistButton].AssistTexture:SetAlpha(1);
+    else
+        GVAR.TargetButton[assistButton].AssistTexture:SetAlpha(0);
     end
 end
 
