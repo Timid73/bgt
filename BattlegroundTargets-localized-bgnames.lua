@@ -63,6 +63,9 @@ elseif locale == "ruRU" then
 		["Берег Древних"] = "Strand of the Ancients",
 		["Остров Завоеваний"] = "Isle of Conquest",
 		["Долина Узников"] = "Valley of the Prisoners",
+		["Битва за Гилнеас"] = "The Battle for Gilneas",
+		["Храм Котмогу"] = "Temple of Kotmogu",
+		["Сверкающие копи"] = "Silvershard Mines",
 	}
 elseif locale == "zhCN" then
 	BattlegroundTargets_BGNames = {
@@ -91,5 +94,8 @@ else
 		["Strand of the Ancients"] = "Strand of the Ancients",
 		["Isle of Conquest"] = "Isle of Conquest",
 		["Valley of the Prisoners"] = "Valley of the Prisoners",
+		["The Battle for Gilneas"] = "The Battle for Gilneas",
+		["Temple of Kotmogu"] = "Temple of Kotmogu",
+		["Silvershard Mines"] = "Silvershard Mines",
 	}
 end
